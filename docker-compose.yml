@@ -1,0 +1,30 @@
+version: '3.8'
+
+services:
+  splash:
+    image: scrapinghub/splash:3.5
+    ports:
+      - "8050:8050"
+    environment:
+      - SPLASH_ARGS=--max-timeout 300 --disable-private-mode --disable-xvfb --verbosity 1
+    volumes:
+      - /tmp/splash-cache:/tmp/splash-cache
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python", "-c", "import requests; requests.get('http://localhost:8050/_ping')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    restart: unless-stopped
+    command: redis-server --appendonly yes
+
+volumes:
+  redis_data:

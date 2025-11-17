@@ -1,0 +1,71 @@
+# Python
+*.py[cod]
+*$py.class
+*.so
+.Python
+__pycache__/
+node_modules/
+*.pyc
+cookies.txt
+.vscode/
+secret.json
+
+# Google Credentials
+credentials.json
+*.credentials.json
+google-credentials.json
+
+# Virtual Environment
+venv/
+env/
+ENV/
+
+# Django
+*.log
+db.sqlite3
+db.sqlite3-journal
+/media
+/staticfiles
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Environment variables
+.env
+.env.local
+
+# Service account (sensitive)
+service_account.json
+
+# Scraping
+scraped_files/
+downloads/
+*.html.cache
+scraper_data/
+
+# TypeScript/Node.js
+dist/
+*.tsbuildinfo
+scraper/ts/**/*.js
+scraper/ts/**/*.js.map
+
+# Arquivos temporários do scraper
+scraper/run_scraper_*.py
+scraper/status_*.json
+
+# Logs de desenvolvimento
+logs/
+*.log
+
+# Arquivos PID temporários (dev runner)
+.django_pid.tmp
+.ts_pid.tmp
+
