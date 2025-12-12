@@ -2,9 +2,26 @@ version: "3.9"
 
 services:
   web:
-    image: ghcr.io/${GITHUB_REPOSITORY_OWNER:-seu-usuario}/${GITHUB_REPOSITORY_NAME:-lua-web-scrapper}-web:latest
-    env_file:
-      - .env.prod
+    image: ghcr.io/${GITHUB_REPOSITORY_OWNER:-mrleonardobrito}/${GITHUB_REPOSITORY_NAME:-lua-web-scrapper}-web:latest
+    environment:
+      DJANGO_SETTINGS_MODULE: lua_web_scrapper.settings
+      DEBUG: ${DEBUG:-False}
+      SECRET_KEY: ${SECRET_KEY:-django-insecure-change-me}
+      ALLOWED_HOSTS: ${ALLOWED_HOSTS:-localhost,127.0.0.1,0.0.0.0}
+      FRONTEND_URL: ${FRONTEND_URL:-http://localhost:3000}
+      CORS_ALLOWED_ORIGINS: ${CORS_ALLOWED_ORIGINS:-http://localhost:3000,http://127.0.0.1:3000}
+      CSRF_TRUSTED_ORIGINS: ${CSRF_TRUSTED_ORIGINS:-http://localhost:3000,http://127.0.0.1:3000}
+      SESSION_COOKIE_SECURE: ${SESSION_COOKIE_SECURE:-True}
+      CSRF_COOKIE_SECURE: ${CSRF_COOKIE_SECURE:-True}
+      SESSION_COOKIE_SAMESITE: ${SESSION_COOKIE_SAMESITE:-Lax}
+      CSRF_COOKIE_SAMESITE: ${CSRF_COOKIE_SAMESITE:-Lax}
+      REDIS_URL: ${REDIS_URL:-redis://redis:6379/1}
+      POSTGRES_DB: ${POSTGRES_DB:-scraper}
+      POSTGRES_USER: ${POSTGRES_USER:-scraper}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-supersecret}
+      POSTGRES_HOST: ${POSTGRES_HOST:-db}
+      POSTGRES_PORT: ${POSTGRES_PORT:-5432}
+      GOOGLE_CREDENTIALS_FILE: ${GOOGLE_CREDENTIALS_FILE:-/app/credentials.json}
     depends_on:
       - db
       - redis
@@ -16,10 +33,27 @@ services:
     command: daphne lua_web_scrapper.asgi:application --bind 0.0.0.0 --port 8000
 
   worker:
-    image: ghcr.io/${GITHUB_REPOSITORY_OWNER:-seu-usuario}/${GITHUB_REPOSITORY_NAME:-lua-web-scrapper}-web:latest
+    image: ghcr.io/${GITHUB_REPOSITORY_OWNER:-mrleonardobrito}/${GITHUB_REPOSITORY_NAME:-lua-web-scrapper}-web:latest
     command: ["python", "manage.py", "rqworker", "default", "scraping", "lua_execution"]
-    env_file:
-      - .env.prod
+    environment:
+      DJANGO_SETTINGS_MODULE: lua_web_scrapper.settings
+      DEBUG: ${DEBUG:-False}
+      SECRET_KEY: ${SECRET_KEY:-django-insecure-change-me}
+      ALLOWED_HOSTS: ${ALLOWED_HOSTS:-localhost,127.0.0.1,0.0.0.0}
+      FRONTEND_URL: ${FRONTEND_URL:-http://localhost:3000}
+      CORS_ALLOWED_ORIGINS: ${CORS_ALLOWED_ORIGINS:-http://localhost:3000,http://127.0.0.1:3000}
+      CSRF_TRUSTED_ORIGINS: ${CSRF_TRUSTED_ORIGINS:-http://localhost:3000,http://127.0.0.1:3000}
+      SESSION_COOKIE_SECURE: ${SESSION_COOKIE_SECURE:-True}
+      CSRF_COOKIE_SECURE: ${CSRF_COOKIE_SECURE:-True}
+      SESSION_COOKIE_SAMESITE: ${SESSION_COOKIE_SAMESITE:-Lax}
+      CSRF_COOKIE_SAMESITE: ${CSRF_COOKIE_SAMESITE:-Lax}
+      REDIS_URL: ${REDIS_URL:-redis://redis:6379/1}
+      POSTGRES_DB: ${POSTGRES_DB:-scraper}
+      POSTGRES_USER: ${POSTGRES_USER:-scraper}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-supersecret}
+      POSTGRES_HOST: ${POSTGRES_HOST:-db}
+      POSTGRES_PORT: ${POSTGRES_PORT:-5432}
+      GOOGLE_CREDENTIALS_FILE: ${GOOGLE_CREDENTIALS_FILE:-/app/credentials.json}
     depends_on:
       - redis
       - db
@@ -77,8 +111,8 @@ services:
       - static_data:/static:ro
       - media_data:/media:ro
     ports:
-      - "80:80"
-      - "443:443"
+      - "8085:80"
+      - "44380:443"
     depends_on:
       - web
     restart: always
