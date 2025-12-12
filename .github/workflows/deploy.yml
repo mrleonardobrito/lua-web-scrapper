@@ -54,7 +54,7 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           port: ${{ secrets.SSH_PORT || 22 }}
           script: |
-            cd /srv/scraper-app
+            cd /srv/scrapper-app
             docker pull ${{ env.IMAGE_NAME }}:latest
             docker compose -f docker-compose.prod.yml pull
             docker compose -f docker-compose.prod.yml up -d --remove-orphans
