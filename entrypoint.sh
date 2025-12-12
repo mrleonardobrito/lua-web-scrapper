@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -e
 
-cd /application
+cd /app
 
 echo "Coletando arquivos estáticos..."
 python manage.py collectstatic --noinput || true
