@@ -3,6 +3,7 @@ version: "3.9"
 services:
   web:
     image: ghcr.io/${GITHUB_REPOSITORY_OWNER:-mrleonardobrito}/${GITHUB_REPOSITORY_NAME:-lua-web-scrapper}-web:latest
+    user: "0:0"
     environment:
       DJANGO_SETTINGS_MODULE: lua_web_scrapper.settings
       DEBUG: ${DEBUG:-False}
@@ -34,9 +35,12 @@ services:
 
   worker:
     image: ghcr.io/${GITHUB_REPOSITORY_OWNER:-mrleonardobrito}/${GITHUB_REPOSITORY_NAME:-lua-web-scrapper}-web:latest
+    user: "0:0"
     command: ["python", "manage.py", "rqworker", "default", "scraping", "lua_execution"]
     environment:
       DJANGO_SETTINGS_MODULE: lua_web_scrapper.settings
+      RUN_COLLECTSTATIC: "0"
+      RUN_MIGRATIONS: "0"
       DEBUG: ${DEBUG:-False}
       SECRET_KEY: ${SECRET_KEY:-django-insecure-change-me}
       ALLOWED_HOSTS: ${ALLOWED_HOSTS:-localhost,127.0.0.1,0.0.0.0}

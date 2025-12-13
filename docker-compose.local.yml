@@ -1,0 +1,18 @@
+version: "3.9"
+
+# Override para desenvolvimento/local:
+# - Reusa o docker-compose.prod.yml, mas força build da imagem localmente
+#   (útil pra validar mudanças no requirements.txt/Dockerfile sem depender do GHCR).
+
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+
+  worker:
+    build:
+      context: .
+      dockerfile: Dockerfile
+
+
