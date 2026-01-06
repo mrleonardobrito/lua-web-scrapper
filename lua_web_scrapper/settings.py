@@ -32,8 +32,6 @@ INSTALLED_APPS = [
     'django_rq',
     'allauth',
     'allauth.account',
-    'allauth.socialaccount',
-    'allauth.socialaccount.providers.google',
     'scraper',
 ]
 
@@ -214,54 +212,7 @@ ACCOUNT_LOGIN_REDIRECT_URL = LOGIN_REDIRECT_URL
 
 ACCOUNT_LOGOUT_REDIRECT_URL = FRONTEND_URL + '/'
 
-
-def load_google_credentials():
-    credentials_file = config(
-        'GOOGLE_CREDENTIALS_FILE', default='credentials.json')
-
-    if not os.path.exists(credentials_file):
-        raise FileNotFoundError(
-            f"Arquivo de credenciais não encontrado: {credentials_file}")
-
-    try:
-        import json
-        with open(credentials_file, 'r') as f:
-            creds = json.load(f)
-
-        client_id = creds.get('web', {}).get('client_id', '')
-        client_secret = creds.get('web', {}).get('client_secret', '')
-
-        if not client_id or not client_secret:
-            raise ValueError(
-                "Arquivo JSON não contém client_id ou client_secret válidos na seção 'web'")
-
-        return {
-            'client_id': client_id,
-            'secret': client_secret,
-        }
-    except json.JSONDecodeError as e:
-        raise ValueError(f"Arquivo JSON inválido: {e}")
-    except KeyError as e:
-        raise ValueError(f"Estrutura do JSON inválida, chave faltando: {e}")
-
-
-google_creds = load_google_credentials()
-
-SOCIALACCOUNT_PROVIDERS = {
-    'google': {
-        'SCOPE': ['profile', 'email'],
-        'AUTH_PARAMS': {'access_type': 'online'},
-        'APP': {
-            'client_id': google_creds['client_id'],
-            'secret': google_creds['secret'],
-            'key': ''
-        }
-    }
-}
-
 SITE_ID = 1
-
-SOCIALACCOUNT_LOGIN_ON_GET = True
 
 REST_FRAMEWORK = {
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',

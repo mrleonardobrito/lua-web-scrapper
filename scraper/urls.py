@@ -19,8 +19,6 @@ urlpatterns = [
     # Authentication
     path('api/auth/csrf-token/', auth.csrf_token, name='csrf_token'),
     path('api/auth/user/', auth.user_info, name='user_info'),
-    path('api/auth/google/', auth.google_login_redirect,
-         name='google_login_redirect'),
     path('api/auth/completed/', auth.post_login_redirect,
          name='post_login_redirect'),
     path('api/auth/logout/', auth.logout, name='logout'),

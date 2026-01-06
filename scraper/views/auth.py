@@ -2,8 +2,6 @@ from django.conf import settings
 from django.shortcuts import redirect
 from django.contrib.auth import logout as django_logout
 from django.middleware.csrf import get_token
-from allauth.socialaccount.providers.google.views import GoogleOAuth2Adapter
-from allauth.socialaccount.providers.oauth2.views import OAuth2LoginView
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
@@ -31,12 +29,6 @@ def user_info(request):
         'is_staff': user.is_staff,
         'is_superuser': user.is_superuser,
     })
-
-
-def google_login_redirect(request):
-    adapter = GoogleOAuth2Adapter(request)
-    view = OAuth2LoginView(adapter=adapter)
-    return view.dispatch(request)
 
 
 def post_login_redirect(request):
