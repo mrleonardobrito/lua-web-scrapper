@@ -140,6 +140,34 @@ Para testar se as credenciais Google estão configuradas corretamente:
 
 ## Produção
 
+### Infra como Código (AWS + Terraform)
+- **Recursos**: EC2 Ubuntu 22.04 com EIP e SG liberando 22/80/443; Docker + Compose instalados via `user_data`.
+- **State**: Terraform Cloud (ajuste `organization/workspace` em `terraform/versions.tf`).
+- **Variáveis principais** (`terraform/variables.tf`):
+  - `aws_region` (padrão `sa-east-1`)
+  - `instance_type` (padrão `t3.micro`)
+  - `key_name` (obrigatório, Key Pair existente)
+- **Execução local**:
+  ```bash
+  export TF_API_TOKEN=...
+  export AWS_ACCESS_KEY_ID=...
+  export AWS_SECRET_ACCESS_KEY=...
+
+  terraform -chdir=terraform init
+  terraform -chdir=terraform plan -var="key_name=seu-keypair"
+  terraform -chdir=terraform apply -auto-approve -var="key_name=seu-keypair"
+  ```
+- **Arquivos sensíveis**: não commitar `*.tfvars`, `.terraform/`, `*.tfstate`.
+- **Bootstrap**: o `user_data` cria `/srv/scraper-app` e instala Docker/Compose; o workflow envia `docker-compose.prod.yml`, `deploy/nginx.conf`, `.env.prod` e `credentials.json`.
+
+### Pipeline (GitHub Actions)
+- Job `provision-infra`: roda Terraform, gera `public_ip` (output).
+- Job `build-and-deploy`: usa o IP dinâmico, publica no GHCR e faz deploy via SSH.
+- Secrets necessários:
+  - Infra: `TF_API_TOKEN`, `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `AWS_KEY_PAIR_NAME` (nome do Key Pair).
+  - Deploy: `SSH_USER`, `SSH_KEY`, `SSH_PORT` (o host vem do Terraform).
+  - App: `ENV_PROD` (conteúdo completo do `.env.prod`) e `GOOGLE_CREDENTIALS_JSON` (conteúdo do `credentials.json`).
+
 ### Configuração ASGI
 
 O sistema usa Django Channels para WebSockets. Em produção, use um servidor ASGI:
